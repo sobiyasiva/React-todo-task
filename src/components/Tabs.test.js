@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom/extend-expect'; // Import jest-dom matchers
 import Tabs from './Tabs';
 
 describe('Tabs Component', () => {
@@ -26,10 +27,7 @@ describe('Tabs Component', () => {
       <Tabs activeTab="all" onTabChange={mockOnTabChange} taskCounts={taskCounts} />
     );
 
-    // Check that "all" tab has the active class
     expect(screen.getByText(/All \(10\)/)).toHaveClass('active');
-
-    // Check that "in-progress" and "completed" tabs do not have the active class
     expect(screen.getByText(/In-Progress \(3\)/)).not.toHaveClass('active');
     expect(screen.getByText(/Completed \(7\)/)).not.toHaveClass('active');
   });
@@ -39,10 +37,7 @@ describe('Tabs Component', () => {
       <Tabs activeTab="in-progress" onTabChange={mockOnTabChange} taskCounts={taskCounts} />
     );
 
-    // Check that "in-progress" tab has the active class
     expect(screen.getByText(/In-Progress \(3\)/)).toHaveClass('active');
-
-    // Check that "all" and "completed" tabs do not have the active class
     expect(screen.getByText(/All \(10\)/)).not.toHaveClass('active');
     expect(screen.getByText(/Completed \(7\)/)).not.toHaveClass('active');
   });
@@ -52,10 +47,7 @@ describe('Tabs Component', () => {
       <Tabs activeTab="completed" onTabChange={mockOnTabChange} taskCounts={taskCounts} />
     );
 
-    // Check that "completed" tab has the active class
     expect(screen.getByText(/Completed \(7\)/)).toHaveClass('active');
-
-    // Check that "all" and "in-progress" tabs do not have the active class
     expect(screen.getByText(/All \(10\)/)).not.toHaveClass('active');
     expect(screen.getByText(/In-Progress \(3\)/)).not.toHaveClass('active');
   });
@@ -80,7 +72,6 @@ describe('Tabs Component', () => {
       <Tabs activeTab="" onTabChange={mockOnTabChange} taskCounts={taskCounts} />
     );
 
-    // Check that none of the tabs have the active class
     expect(screen.getByText(/All \(10\)/)).not.toHaveClass('active');
     expect(screen.getByText(/In-Progress \(3\)/)).not.toHaveClass('active');
     expect(screen.getByText(/Completed \(7\)/)).not.toHaveClass('active');

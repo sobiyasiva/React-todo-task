@@ -8,21 +8,25 @@ html, body {
   width: 100%;
   margin: 0;
   padding: 0;
+  background-color: pink;
+  overflow: hidden;
+  
 }
 
 .container {
-  margin: 0 auto; 
+  margin: 1% auto; 
   width: 50%; 
   height: 97vh;
   display: flex;
   flex-direction: column;
   padding: 20px;
   font-family: Arial, sans-serif;
+  background-color: rgb(187, 209, 151);
 }
 
 .header {
   text-align: center;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .title {
@@ -32,7 +36,7 @@ html, body {
 .task-list-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   font-weight: bold;
   position: sticky;
   top: 0;
