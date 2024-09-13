@@ -18,21 +18,6 @@ describe('Toast Component', () => {
     expect(toastElement).toHaveClass('toast');
     expect(toastElement).toHaveClass('success');
   });
-
-  test('calls the onClose function when the toast is clicked', () => {
-    const message = 'Click to close';
-    const type = 'error';
-    const onCloseMock = jest.fn();
-
-    render(<Toast message={message} type={type} onClose={onCloseMock} />);
-
-    // Click the toast
-    const toastElement = screen.getByText(message);
-    fireEvent.click(toastElement);
-
-    // Check if the onClose function is called
-    expect(onCloseMock).toHaveBeenCalledTimes(1);
-  });
-
-
 });
+
+

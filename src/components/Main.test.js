@@ -3,9 +3,6 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import Main from "./Main";
-
-
-
 beforeEach(() => {
   Storage.prototype.getItem = jest.fn(() => JSON.stringify([]));
   Storage.prototype.setItem = jest.fn();
@@ -56,22 +53,6 @@ describe('Main Component', () => {
     expect(screen.queryByText('Delete')).not.toBeInTheDocument();
   });
 
-  // test('deletes an existing task', () => {
-  //   render(<Main />);
-    
-  //   // Add a task first
-  //   const input = screen.getByPlaceholderText('Enter a task');
-  //   const addButton = screen.getByText('Add Task');
-    
-  //   fireEvent.change(input, { target: { value: 'Task to Delete' } });
-  //   fireEvent.click(addButton);
-
-  //   // Delete the task
-  //   const deleteButton = screen.getByText('Delete');
-  //   fireEvent.click(deleteButton);
-
-  //   expect(screen.queryByText('Task to Delete')).not.toBeInTheDocument();
-  // });
 });
 
 test('should change Save Task button back to Add Task after saving', () => {
@@ -97,22 +78,7 @@ test('should change Save Task button back to Add Task after saving', () => {
   // Check if the button label changes back to "Add Task"
   expect(screen.getByText('Add Task')).toBeInTheDocument();
 });
-// ----------------
-// test('toggles task completion status', () => {
-//   render(<Main />);
-//   const input = screen.getByPlaceholderText('Enter a task');
-//   fireEvent.change(input, { target: { value: 'New Task' } });
-//   fireEvent.click(screen.getByText('Add Task'));
 
-//   const checkbox = screen.getByRole('checkbox');
-//   fireEvent.click(checkbox);
-
-//   expect(checkbox).toBeChecked();
-//   fireEvent.click(checkbox);
-//   expect(checkbox).not.toBeChecked();
-// });
-
-// 6. Toast Messages
 test('displays toast messages on adding a task', () => {
   render(<Main />);
   const input = screen.getByPlaceholderText('Enter a task');
@@ -196,30 +162,6 @@ describe('Task Input Special Characters Handling', () => {
 });
 
 describe('Main Component - Modal Functionality', () => {
-  // it('should toggle the task completion status and close the modal when handleConfirmToggle is called', () => {
-  //   const { getByText, getByRole } = render(<Main />);
-  //   // getByRole-checks type as button,components etc
-  //   // Set up initial state with a task
-  //   const input = getByRole('textbox');
-  //   fireEvent.change(input, { target: { value: 'Test Task' } });
-  //   const addButton = getByText('Add Task');
-  //   fireEvent.click(addButton);
-    
-  //   // Find the checkbox and click it to trigger the modal
-  //   const checkbox = getByRole('checkbox');
-  //   fireEvent.click(checkbox);
-    
-  //   // Mocking the confirmation to Yes (handleConfirmToggle)
-  //   const yesButton = getByText('Yes');
-  //   fireEvent.click(yesButton);
-    
-  //   // Expect the task to be marked as completed
-  //   expect(checkbox.checked).toBe(true);
-    
-  //   // Ensure the modal is closed,dialog is used in checking close modal
-  //   expect(getByRole('dialog')).not.toBeInTheDocument();
-  // });
-
   it('should close the modal and reset the taskToToggle state when handleCloseModal is called', () => {
     const { getByText, getByRole, queryByRole } = render(<Main />);
     
@@ -466,7 +408,7 @@ it('should edit an existing task successfully', () => {
   expect(screen.getByText('Task updated successfully')).toBeInTheDocument();
 });
 
-// ------------------------------
+
 test('starts editing a task successfully', () => {
   render(<Main />);
   fireEvent.change(screen.getByPlaceholderText('Enter a task'), { target: { value: 'Task to Edit' } });
@@ -531,3 +473,73 @@ test('confirms task status toggle to In-progress', () => {
   // Verify that the task status was updated to In-progress
   expect(screen.getByText('Task successfully marked as In-progress')).toBeInTheDocument();
 });
+test('handles tasks with mixed case and spaces', () => {
+  render(<Main />);
+  fireEvent.change(screen.getByPlaceholderText('Enter a task'), { target: { value: 'Task With MiXed CASE' } });
+  fireEvent.click(screen.getByText('Add Task'));
+  expect(screen.getByText('Task With MiXed CASE')).toBeInTheDocument();
+});
+test('handles tasks with special characters', () => {
+  render(<Main />);
+  fireEvent.change(screen.getByPlaceholderText('Enter a task'), { target: { value: '@$% Special Task!' } });
+  fireEvent.click(screen.getByText('Add Task'));
+  expect(screen.getByText('Special Task')).toBeInTheDocument();
+});
+test('clears tasks from local storage after deletion', () => {
+  // Mock localStorage
+  const setItemMock = jest.spyOn(Storage.prototype, 'setItem');
+  const getItemMock = jest.spyOn(Storage.prototype, 'getItem');
+
+  // Mock the initial localStorage data with a task
+  const tasks = [{ text: 'Task to Clear', completed: false }];
+  getItemMock.mockReturnValue(JSON.stringify(tasks));
+
+  // Render the component
+  render(<Main />);
+
+  // Simulate clicking the delete button and confirming deletion
+  fireEvent.click(screen.getByText('Delete'));
+  fireEvent.click(screen.getByText('Yes'));
+
+  // Expect that localStorage was updated with an empty array after deletion
+  expect(setItemMock).toHaveBeenCalledWith('tasks', JSON.stringify([]));
+
+  // Clean up mocks
+  setItemMock.mockRestore();
+  getItemMock.mockRestore();
+});
+test('focuses input field when editing a task', () => {
+  render(<Main />);
+  fireEvent.change(screen.getByPlaceholderText('Enter a task'), { target: { value: 'Task' } });
+  fireEvent.click(screen.getByText('Add Task'));
+  fireEvent.click(screen.getByText('Edit'));
+  const input = screen.getByPlaceholderText('Edit task');
+  expect(input).toHaveFocus();
+});
+test('shows error message when editing task to contain only whitespace', () => {
+  render(<Main />);
+  fireEvent.change(screen.getByPlaceholderText('Enter a task'), { target: { value: 'Task to Edit' } });
+  fireEvent.click(screen.getByText('Add Task'));
+  fireEvent.click(screen.getByText('Edit'));
+  fireEvent.change(screen.getByPlaceholderText('Edit task'), { target: { value: '    ' } });
+  fireEvent.click(screen.getByText('Save Task'));
+  expect(screen.getByText('Task cannot be empty')).toBeInTheDocument();
+});
+test('handles tasks with long text', () => {
+  const longTaskText = 'This is a very long task that might span multiple lines or cause overflow issues';
+  render(<Main />);
+  fireEvent.change(screen.getByPlaceholderText('Enter a task'), { target: { value: longTaskText } });
+  fireEvent.click(screen.getByText('Add Task'));
+  expect(screen.getByText(longTaskText)).toBeInTheDocument();
+});
+test('shows error message when editing task to contain only whitespace', () => {
+  render(<Main />);
+  fireEvent.change(screen.getByPlaceholderText('Enter a task'), { target: { value: 'Task to Edit' } });
+  fireEvent.click(screen.getByText('Add Task'));
+  fireEvent.click(screen.getByText('Edit'));
+  fireEvent.change(screen.getByPlaceholderText('Edit task'), { target: { value: '    ' } });
+  fireEvent.click(screen.getByText('Save Task'));
+  expect(screen.getByText('Whitespace at the beginning is not allowed')).toBeInTheDocument();
+});
+
+
