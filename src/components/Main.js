@@ -118,6 +118,7 @@ const startEditing = (index) => {
     } else {
       setConfirmationMessage('Are you sure you want to mark the task as Completed?');
     }
+
     setShowModal(true);
   };
 
@@ -143,6 +144,10 @@ const startEditing = (index) => {
       } else {
         addToast('Task successfully marked as In-progress', 'success');
       }  
+      const taskListContainer = document.querySelector('.task-list-container');
+      if (taskListContainer) {
+        taskListContainer.scrollTop = 0;
+      }
       setTaskToToggle(null);
     }
     setShowModal(false);
