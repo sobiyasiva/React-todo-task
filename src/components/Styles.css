@@ -317,8 +317,8 @@ html, body {
 
 .modal-buttons {
   display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
+  justify-content: center;
+  /* margin-top: 20px; */
 }
 
 .modal-buttons button {
@@ -331,6 +331,7 @@ html, body {
 .modal-buttons .confirm-button {
   background-color: #4caf50;
   color: white;
+  margin-right: 20px;
 }
 
 .modal-buttons .cancel-button {
