@@ -48,9 +48,9 @@ function Main() {
     const normalizedInput = taskInput.trim().toLowerCase();  
     if (taskInput.trim() === '') {
       addToast('Task cannot be empty', 'error');
-      setTaskInput('');  
-      setIsEditing(false);
-      setEditingIndex(null);
+      // setTaskInput('');  
+      // setIsEditing(false);
+      // setEditingIndex(null);
       return;
     }
   
